@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { Row, Col, Form, FormGroup, Input, Label, Button, Table, Pagination, PaginationItem, PaginationLink } from 'reactstrap';
 import { errorActions } from '../../redux/actions/error.actions';
 import { REQUEST } from '../../request.constants';
@@ -33,18 +33,37 @@ export const ProjectErrorsRow = ({ project, errors, location }) => {
   const [status,setStatus] = useState(REQUEST.PENDING);
   const dispatch = useDispatch();
   const urlParams = new URLSearchParams(location.search);
-  const { register, handleSubmit, watch} = useForm();
-  const [criteria, setCriteria] = useState({
-    search: '',
-    date_from: '',
-    date_to: '',
+  const history = useHistory();
+  const criteria = {
+    search: urlParams.get("search") || "",
+    date_from: urlParams.get("date_from") || "",
+    date_to: urlParams.get("date_to") || "",
+  }
+  const { register, handleSubmit} = useForm({
+    defaultValues: {
+      search: criteria.search,
+      date_from: urlParams.get("date_from") || "",
+      date_to: urlParams.get("date_to") || ""
+    }
   });
+  
 
   const requestErrors = () => {
-    console.log(criteria);
+    const requestCriteria = {...criteria};
+
+    if(criteria.date_from) {
+      const date = new Date(criteria.date_from + "T00:00");
+      requestCriteria.date_from = date.getTime() / 1000;
+    }
+
+    if(criteria.date_to) {
+      const date = new Date(criteria.date_to + "T00:00");
+      requestCriteria.date_to = date.getTime() / 1000;
+    }
+    
     ProjectApi.getErrors(project.id, {
       page: urlParams.get("page") || 1,
-      ...criteria,
+      ...requestCriteria,
     })
     .then(response => response.data)
     .then(json => {
@@ -58,25 +77,10 @@ export const ProjectErrorsRow = ({ project, errors, location }) => {
 
   useEffect(() => {
     requestErrors();
-  }, [urlParams.get("page"), criteria]);
+  }, [urlParams.get("page"), urlParams.get("search"), urlParams.get("date_from"), urlParams.get("date_to")]);
 
-  const onSubmit = data => {
-    const newCriteria = {...data};
-    if(data.search) {
-      newCriteria.search = data.search;
-    }
-
-    if(data.date_from) {
-      const date = new Date(data.date_from  +"T00:00");
-      newCriteria.date_from = date.getTime() / 1000;
-    }
-
-    if(data.date_to) {
-      const date = new Date(data.date_to  +"T00:00");
-      newCriteria.date_to = date.getTime() / 1000;
-    }
-    
-    setCriteria(newCriteria);
+  const onSubmit = data => {    
+    history.replace(`${RoutingConfig.projectPage.replace(":id", project.id)}?page=1&search=${data.search}&date_from=${data.date_from}&date_to=${data.date_to}`);
   }
 
   return(
