@@ -1,8 +1,11 @@
 import React from 'react'
-import { DeleteAccountForm } from '../components'
+import { DeleteAccountForm, Seo } from '../components'
 
 export const DeleteAccount = () => {
   return(
-    <DeleteAccountForm />
+    <>
+      <Seo pageTitle="Delete account" />
+      <DeleteAccountForm />
+    </>
   )
 }

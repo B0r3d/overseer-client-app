@@ -6,6 +6,7 @@ import { alertActions } from '../redux';
 import { RoutingConfig } from '../Routes';
 import { ProjectApi } from '../services';
 import { STATUS_CODES } from '../status.constants';
+import { Seo } from '../components';
 
 export const ManageInvitation = ({ location }) => {
   const queryParams = new URLSearchParams(location.search);
@@ -61,6 +62,7 @@ export const ManageInvitation = ({ location }) => {
 
   return(
     <Container className="pt-4">
+      <Seo pageTitle="Manage invitation" />
       <Row>
         <Col>
           <div className="mb-4">

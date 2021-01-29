@@ -1,7 +1,11 @@
 import React from 'react'
+import { Seo } from '../components';
 
 export const Home = () => {
   return (
-    <h2>Home page</h2>
+    <>
+      <Seo pageTitle="Home" />
+      <h2>Home page</h2>
+    </>
   )
 }

@@ -7,6 +7,7 @@ import { useHistory } from 'react-router-dom';
 import { RoutingConfig } from '../Routes';
 import { alertActions, projectActions } from '../redux';
 import { ProjectCard } from '../components';
+import { Seo } from '../components';
 
 const Project = ({ projects, auth, match }) => {
   const projectId = match.params.id;
@@ -45,6 +46,7 @@ const Project = ({ projects, auth, match }) => {
 
   return(
     <>
+      {<Seo pageTitle={project ? project.title : ''} />}
       {status === REQUEST.PENDING && <h2>Loading...</h2>}
       {status === REQUEST.ERROR && <h2>Failed to load project.</h2>}
       {status === REQUEST.SUCCESS && project && <ProjectCard project={project} user={auth.user} />}

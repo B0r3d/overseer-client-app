@@ -1,8 +1,12 @@
 import React from 'react'
 import { NewProjectForm } from '../components'
+import { Seo } from '../components';
 
 export const NewProject = () => {
   return(
-    <NewProjectForm />
+    <>
+      <Seo pageTitle="New project" />
+      <NewProjectForm />
+    </>
   )
 }

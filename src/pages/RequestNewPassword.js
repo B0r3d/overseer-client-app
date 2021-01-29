@@ -1,8 +1,12 @@
 import React from 'react'
 import { RequestNewPasswordForm } from '../components'
+import { Seo } from '../components';
 
 export const RequestNewPassword = () => {
   return(
-    <RequestNewPasswordForm />
+    <>
+      <Seo pageTitle="Forgot password" />
+      <RequestNewPasswordForm />
+    </>
   )
 }

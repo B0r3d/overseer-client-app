@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Col, Row } from 'reactstrap';
-import { NewPasswordForm } from '../components';
+import { NewPasswordForm, Seo } from '../components';
 import { UserApi } from '../services';
 
 export const NewPassword = props => {
@@ -21,13 +21,17 @@ export const NewPassword = props => {
   if(validToken === false) {
     return(
       <Row className="pt-5">
+        <Seo pageTitle="New password" />
         <Col className="text-center"><h2>Token is invalid or expired.</h2></Col>
       </Row>
     )
   }
 
   if(validToken === true) {
-    return <NewPasswordForm passwordResetTokenId={passwordResetToken} />
+    return <>
+      <Seo pageTitle="New password" />
+      <NewPasswordForm passwordResetTokenId={passwordResetToken} />
+    </>
   }
 
   return null;

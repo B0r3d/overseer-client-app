@@ -7,7 +7,7 @@ import { useHistory } from 'react-router-dom';
 import { RoutingConfig } from '../Routes';
 import { alertActions, projectActions } from '../redux';
 import { ProjectAuthorizationService } from '../util';
-import { ProjectEditForm } from '../components';
+import { ProjectEditForm, Seo } from '../components';
 
 const EditProject = ({ auth, projects, match}) => {
   const projectId = match.params.id;
@@ -50,6 +50,7 @@ const EditProject = ({ auth, projects, match}) => {
 
   return(
     <>
+      <Seo pageTitle={`${project ? `Edit ${project.title}` : ''}`} />
       {status === REQUEST.PENDING && <h2>Loading...</h2>}
       {status === REQUEST.ERROR && <h2>Failed to load project.</h2>}
       {status === REQUEST.SUCCESS && project && <ProjectEditForm project={project} />}

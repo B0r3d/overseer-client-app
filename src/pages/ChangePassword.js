@@ -1,8 +1,11 @@
 import React from 'react'
-import { ChangePasswordForm } from '../components'
+import { ChangePasswordForm, Seo } from '../components'
 
 export const ChangePassword = () => {
   return(
-    <ChangePasswordForm />
+    <>
+      <Seo pageTitle="Change password" />
+      <ChangePasswordForm />
+    </>
   )
 }
