@@ -5,12 +5,14 @@ import { alertReducer } from './alert.reducer';
 import { projectReducer } from "./project.reducer";
 import { modalReducer } from "./modal.reducer";
 import { AUTH } from "../constants";
+import { errorReducer } from "./error.reducer";
 
 const appReducer = combineReducers({
   auth: authReducer,
   alert: alertReducer,
   projects: projectReducer,
   modal: modalReducer,
+  errors: errorReducer,
 });
 
 export const rootReducer = (state, action) => {

@@ -9,7 +9,7 @@ import { alertActions, projectActions } from '../redux';
 import { ProjectCard } from '../components';
 import { Seo } from '../components';
 
-const Project = ({ projects, auth, match }) => {
+const Project = ({ projects, auth, match, errors, location }) => {
   const projectId = match.params.id;
   const project = projects.currentProject;
   const [status,setStatus] = useState();
@@ -49,7 +49,7 @@ const Project = ({ projects, auth, match }) => {
       {<Seo pageTitle={project ? project.title : ''} />}
       {status === REQUEST.PENDING && <h2>Loading...</h2>}
       {status === REQUEST.ERROR && <h2>Failed to load project.</h2>}
-      {status === REQUEST.SUCCESS && project && <ProjectCard project={project} user={auth.user} />}
+      {status === REQUEST.SUCCESS && project && <ProjectCard project={project} user={auth.user} errors={errors} location={location} />}
     </>
   )
 }
@@ -57,6 +57,7 @@ const Project = ({ projects, auth, match }) => {
 const mapStateToProps = state => ({
   projects: state.projects,
   auth: state.auth,
+  errors: state.errors,
 });
 
 const ConnectedPage = connect(mapStateToProps)(Project);

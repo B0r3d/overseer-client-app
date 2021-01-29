@@ -122,6 +122,15 @@ const deleteProject = projectId => {
   });
 }
 
+const getErrors = (projectId, {page, search, date_from, date_to}) => {
+  const jwt = localStorage.getItem("access_token");
+  return Axios.get(`/api/v1/project/${projectId}/errors?page=${page}&search=${search}&date_from=${date_from}&date_to=${date_to}`, {
+    headers: {
+      Authorization: `Bearer ${jwt}`,
+    },
+  });
+}
+
 export const ProjectApi = {
   createProject,
   getProjects,
@@ -135,4 +144,5 @@ export const ProjectApi = {
   createApiKey,
   deleteApiKey,
   deleteProject,
+  getErrors,
 }
