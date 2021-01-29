@@ -7,6 +7,10 @@ import { errorActions } from '../../redux/actions/error.actions';
 import { REQUEST } from '../../request.constants';
 import { RoutingConfig } from '../../Routes';
 import { ProjectApi } from '../../services';
+import {
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
+} from 'recharts';
+import styles from './style.module.css';
 
 const formatDate = occurredAt => {
   const date = new Date(occurredAt);
@@ -75,13 +79,66 @@ export const ProjectErrorsRow = ({ project, errors, location }) => {
     });
   }
 
+  const requestChartData = () => {
+    const requestCriteria = {...criteria};
+
+    if(criteria.date_from) {
+      const date = new Date(criteria.date_from + "T00:00");
+      requestCriteria.date_from = date.getTime() / 1000;
+    }
+
+    if(criteria.date_to) {
+      const date = new Date(criteria.date_to + "T00:00");
+      requestCriteria.date_to = date.getTime() / 1000;
+    }
+    
+    ProjectApi.getChartData(project.id, {
+      page: urlParams.get("page") || 1,
+      ...requestCriteria,
+    })
+    .then(response => response.data)
+    .then(json => {
+      setStatus(REQUEST.SUCCESS);
+      dispatch(errorActions.receiveChartData(json.payload));
+    })
+    .catch(error => {
+      setStatus(REQUEST.ERROR);
+    });
+  }
+
   useEffect(() => {
     requestErrors();
+    requestChartData();
   }, [urlParams.get("page"), urlParams.get("search"), urlParams.get("date_from"), urlParams.get("date_to")]);
 
   const onSubmit = data => {    
     history.replace(`${RoutingConfig.projectPage.replace(":id", project.id)}?page=1&search=${data.search}&date_from=${data.date_from}&date_to=${data.date_to}`);
   }
+  function formatXAxis(tickItem) {
+    const date = new Date(tickItem);
+    let month = '' + (date.getMonth() + 1),
+      day = '' + date.getDate(),
+      year = '' + date.getFullYear();
+        
+    if(month.length < 2) 
+      month = '0' + month;
+    if(day.length < 2) 
+      day = '0' + day;
+
+    return `${day}.${month}.${year}`;
+  }
+
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload) {
+      return (
+        <div className={styles['custom-tooltip']}>
+          <p className={styles['label']}>{`Exceptions count occured on ${formatXAxis(label)}: `}<strong>{payload[0].value}</strong></p>
+        </div>
+      );
+    }
+  
+    return null;
+  };
 
   return(
     <Row>
@@ -94,6 +151,17 @@ export const ProjectErrorsRow = ({ project, errors, location }) => {
         {status === REQUEST.ERROR && <p>Failed to load errors.</p> }
         {status === REQUEST.SUCCESS &&
           <>
+            {errors.chartData &&
+            <ResponsiveContainer width="100%" height={500}>
+              <LineChart data={errors.chartData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="date" tickFormatter={formatXAxis} />
+                  <YAxis allowDecimals={false} />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Legend />
+                  <Line name="Error count" type="monotone" dataKey="error_count" stroke="#8884d8" strokeWidth={3} />
+              </LineChart>
+            </ResponsiveContainer>}
             <Form onSubmit={handleSubmit(onSubmit)} className="mb-4">
               <Row>
                 <Col lg="8">
@@ -135,7 +203,7 @@ export const ProjectErrorsRow = ({ project, errors, location }) => {
                     <td>{error.error_code}</td>
                     <td>{formatDate(error.occurred_at)}</td>
                     <td>{error.file}</td>
-                    <td><Link to="/">Show</Link></td>
+                    <td><Link to={RoutingConfig.errorDetails.replace(":id", project.id).replace(":error_id", error.id)}>Show</Link></td>
                   </tr>
                 )}
               </tbody>

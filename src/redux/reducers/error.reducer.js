@@ -5,6 +5,7 @@ const initialState = {
   count: 0,
   items: [],
   currentError: null,
+  chartData: [],
 }
 
 export const errorReducer = (state = initialState, {type, payload}) => {
@@ -16,6 +17,16 @@ export const errorReducer = (state = initialState, {type, payload}) => {
         count: payload.count,
         items: payload.items,
       };
+    case ERROR.CHART_DATA_RECEIVED:
+      return {
+        ...state,
+        chartData: payload,
+      };
+    case ERROR.ERROR_RECEIVED:
+      return {
+        ...state,
+        currentError: payload,
+      }
     default:
       return state;
   }

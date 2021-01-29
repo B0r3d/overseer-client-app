@@ -5,3 +5,4 @@ export * from './NotFoundComponent';
 export * from './ProjectList';
 export * from './ProjectCard';
 export * from './Seo';
+export * from './ErrorCard';

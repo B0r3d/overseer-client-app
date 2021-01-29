@@ -23,3 +23,13 @@
 .autocomplete-item:hover {
   background-color: rgba(0,0,0,0.1);
 }
+
+.custom-tooltip {
+  background-color: turquoise;
+  padding: 16px 24px;
+}
+
+.label {
+  line-height: 1;
+  margin-bottom: 0;
+}

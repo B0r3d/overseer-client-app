@@ -1,7 +1,7 @@
 import React from 'react'
 import {Switch, Route} from "react-router-dom";
 import { OnlyLoggedInRoute } from './components';
-import { Account, Home, Login, Register, Logout, ChangePassword, RequestNewPassword, NewPassword, DeleteAccount, Page404, NewProject, Project, EditProject, ManageInvitation } from './pages';
+import { Account, Home, Login, Register, Logout, ChangePassword, RequestNewPassword, NewPassword, DeleteAccount, Page404, NewProject, Project, EditProject, ManageInvitation, Error } from './pages';
 
 export const RoutingConfig = {
     home: "/",
@@ -17,6 +17,7 @@ export const RoutingConfig = {
     projectPage: "/account/projects/:id",
     editProject: "/account/projects/:id/edit",
     acceptInvitation: "/accept-invitation",
+    errorDetails: "/account/project/:id/error/:error_id",
 }
 
 export const Routes = () => (
@@ -34,7 +35,7 @@ export const Routes = () => (
     <OnlyLoggedInRoute path={RoutingConfig.editProject} component={EditProject} />
     <OnlyLoggedInRoute path={RoutingConfig.projectPage} component={Project} />
     <OnlyLoggedInRoute path={RoutingConfig.acceptInvitation} component={ManageInvitation} />
-
+    <OnlyLoggedInRoute path={RoutingConfig.errorDetails} component={Error} />
 
 
 
