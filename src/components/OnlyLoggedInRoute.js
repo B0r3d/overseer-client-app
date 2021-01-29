@@ -5,12 +5,20 @@ import { RoutingConfig } from '../Routes'
 
 const OnlyLoggedInRoute = ({ auth, path, component }) => {
   
+  console.log(path);
+  const setCookie = (cname, cvalue, minutes) => {
+    var d = new Date();
+    d.setTime(d.getTime() + (minutes*60*1000));
+    var expires = "expires="+ d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+  }
   if(auth.isAuthenticated) {
     return(
       <Route exact path={path} component={component} />
     )
   }
 
+  setCookie("login_redirect_path", path, 5);
   return(
     <Redirect to={RoutingConfig.login} />
   )

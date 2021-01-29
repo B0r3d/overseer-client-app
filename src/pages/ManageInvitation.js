@@ -39,7 +39,7 @@ export const ManageInvitation = ({ location }) => {
   }
 
   const onCancel = () => {
-    ProjectApi.acceptInvitation(projectId, invitationId)
+    ProjectApi.cancelInvitation(projectId, invitationId)
     .then(() => {
       history.push(RoutingConfig.account);
       dispatch(alertActions.successAlert("You have declined the invitation."))

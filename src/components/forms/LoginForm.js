@@ -19,8 +19,31 @@ export const LoginForm = () => {
     UserApi.authenticate(data)
     .then(response => response.data)
     .then(json => {
+      const getCookie = (cname) => {
+        var name = cname + "=";
+        var decodedCookie = decodeURIComponent(document.cookie);
+        var ca = decodedCookie.split(';');
+        for(var i = 0; i <ca.length; i++) {
+          var c = ca[i];
+          while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+          }
+          if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+          }
+        }
+        return "";
+      }
+
+      const redirectCookie = getCookie("login_redirect_path");
+
       dispatch(authActions.authenticate(json.payload.access_token));
-      history.push(RoutingConfig.account);
+      if(redirectCookie) {
+        history.push(redirectCookie);
+      }
+      else {
+        history.push(RoutingConfig.account);
+      }
       dispatch(alertActions.successAlert("Login success"));
     })
     .catch(error => {
