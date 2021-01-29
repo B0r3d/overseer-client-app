@@ -1,7 +1,7 @@
 import React from 'react'
 import {Switch, Route} from "react-router-dom";
 import { OnlyLoggedInRoute } from './components';
-import { Account, Home, Login, Register, Logout, ChangePassword, RequestNewPassword, NewPassword } from './pages';
+import { Account, Home, Login, Register, Logout, ChangePassword, RequestNewPassword, NewPassword, DeleteAccount, Page404, NewProject, Project, EditProject, ManageInvitation } from './pages';
 
 export const RoutingConfig = {
     home: "/",
@@ -12,6 +12,11 @@ export const RoutingConfig = {
     changePassword: "/account/change-password",
     requestNewPassword: "/request-new-password",
     newPassword: "/new-password",
+    deleteAccount: "/account/delete-account",
+    newProject: "/account/projects/new",
+    projectPage: "/account/projects/:id",
+    editProject: "/account/projects/:id/edit",
+    acceptInvitation: "/accept-invitation",
 }
 
 export const Routes = () => (
@@ -24,5 +29,17 @@ export const Routes = () => (
     <OnlyLoggedInRoute path={RoutingConfig.logout} component={Logout} />
     <Route path={RoutingConfig.requestNewPassword} component={RequestNewPassword} />
     <Route path={RoutingConfig.newPassword} component={NewPassword} />
+    <OnlyLoggedInRoute path={RoutingConfig.deleteAccount} component={DeleteAccount} />
+    <OnlyLoggedInRoute path={RoutingConfig.newProject} component={NewProject} />
+    <OnlyLoggedInRoute path={RoutingConfig.editProject} component={EditProject} />
+    <OnlyLoggedInRoute path={RoutingConfig.projectPage} component={Project} />
+    <OnlyLoggedInRoute path={RoutingConfig.acceptInvitation} component={ManageInvitation} />
+
+
+
+
+    
+    {/* 404 ROUTe, THIS HAS TO BE THE LAST ROUTE! */}
+    <Route component={Page404} />
   </Switch>
 );

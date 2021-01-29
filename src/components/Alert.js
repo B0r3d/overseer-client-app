@@ -3,8 +3,6 @@ import { ALERT_CONSTANTS } from '../redux';
 import { Alert as AlertWidget } from 'reactstrap';
 
 export const Alert = ({ alert }) => {
-  console.log(alert);
-
   switch(alert.type) {
     case ALERT_CONSTANTS.SUCCESS:
       return <AlertWidget color="success">{alert.message}</AlertWidget>

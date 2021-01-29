@@ -1,11 +1,26 @@
 import React from 'react'
+import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
+import { ProjectList } from '../components'
 import { RoutingConfig } from '../Routes'
 
-export const Account = () => {
+const Account = ({ auth }) => {
   return(
     <div className="container">
-      <Link to={RoutingConfig.changePassword}>Change password</Link>
+      <h2>Welcome {auth.user.username}</h2>
+      <Link to={RoutingConfig.newProject}>Create new project</Link><br />
+      <Link to={RoutingConfig.changePassword}>Change password</Link><br />
+      <Link to={RoutingConfig.deleteAccount}>Delete account</Link>
+
+      <ProjectList />
     </div>
   )
 }
+
+const mapStateToProps = state => ({
+  auth: state.auth,
+});
+
+const ConnectedAccount = connect(mapStateToProps)(Account);
+
+export { ConnectedAccount as Account };

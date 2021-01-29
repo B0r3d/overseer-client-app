@@ -17,8 +17,6 @@ if(jwt) {
     username: jwtPayload.sub,
     roles: jwtPayload.payload.roles,
   }
-
-  console.log(initialState);
 }
 else {
   initialState.isAuthenticated = false;
@@ -28,7 +26,7 @@ export const authReducer = (state = initialState, {type, payload}) => {
   switch(type) {
     case AUTH.AUTHENTICATE:
       localStorage.setItem('access_token', payload.jwt);
-      const jwtPayload = JwtDecoder.decode(jwt);
+      const jwtPayload = JwtDecoder.decode(payload.jwt);
       return {
         isAuthenticated: true,
         token: {

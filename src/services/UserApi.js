@@ -1,7 +1,5 @@
 import axios from "axios";
 
-const jwt = localStorage.getItem('access_token');
-
 const Axios = axios.create({
   baseURL: process.env.REACT_APP_BACKEND_URL,
 });
@@ -26,6 +24,7 @@ const userExists = (username, email) => {
 }
 
 const changePassword = (userId, { current_password, new_password}) => {
+  const jwt = localStorage.getItem('access_token');
   return Axios.put(`/api/v1/user/${userId}/password`, {
     current_password,
     new_password
@@ -56,6 +55,28 @@ const setNewPassword = (password_reset_token, {password}) => {
     new_password: password
   });
 }
+
+const deleteUser = (userId, { password }) => {
+  const jwt = localStorage.getItem('access_token');
+  return Axios.delete(`/api/v1/user/${userId}`, {
+    headers: {
+      "Authorization": `Bearer ${jwt}`
+    },
+    data: {
+      current_password: password
+    }
+  });
+}
+
+const getUsers = searchTerm => {
+  const jwt = localStorage.getItem('access_token');
+  return Axios.get(`/api/v1/user?search=${searchTerm}`, {
+    headers: {
+      Authorization: `Bearer ${jwt}`
+    }
+  });
+
+}
 export const UserApi = {
   registerUser,
   authenticate,
@@ -65,4 +86,6 @@ export const UserApi = {
   requestPasswordReset,
   checkPasswordResetToken,
   setNewPassword,
+  deleteUser,
+  getUsers,
 };
