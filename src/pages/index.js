@@ -13,3 +13,5 @@ export * from './Project';
 export * from './EditProject';
 export * from './ManageInvitation';
 export * from './Error';
+export * from './NewWebhookIntegration';
+export * from './WebhookIntegration';

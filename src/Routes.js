@@ -1,7 +1,8 @@
 import React from 'react'
 import {Switch, Route} from "react-router-dom";
 import { OnlyLoggedInRoute } from './components';
-import { Account, Home, Login, Register, Logout, ChangePassword, RequestNewPassword, NewPassword, DeleteAccount, Page404, NewProject, Project, EditProject, ManageInvitation, Error } from './pages';
+import { Account, Home, Login, Register, Logout, ChangePassword, RequestNewPassword, NewPassword, DeleteAccount, Page404, NewProject, Project, EditProject, ManageInvitation, Error, NewWebhookIntergration, WebhookIntegration } from './pages';
+import { EditWebhookIntegration } from './pages/EditWebhookIntegration';
 
 export const RoutingConfig = {
     home: "/",
@@ -18,6 +19,9 @@ export const RoutingConfig = {
     editProject: "/account/projects/:id/edit",
     acceptInvitation: "/accept-invitation",
     errorDetails: "/account/project/:id/error/:error_id",
+    newWebhookIntegration: "/account/project/:id/webhook-integration/new",
+    webhookintegration: "/account/project/:id/webhook-integration/:integration_id",
+    editWebhookintegration: "/account/project/:id/webhook-integration/:integration_id/edit",
 }
 
 export const Routes = () => (
@@ -36,7 +40,9 @@ export const Routes = () => (
     <OnlyLoggedInRoute path={RoutingConfig.projectPage} component={Project} />
     <OnlyLoggedInRoute path={RoutingConfig.acceptInvitation} component={ManageInvitation} />
     <OnlyLoggedInRoute path={RoutingConfig.errorDetails} component={Error} />
-
+    <OnlyLoggedInRoute path={RoutingConfig.newWebhookIntegration} component={NewWebhookIntergration} />
+    <OnlyLoggedInRoute path={RoutingConfig.editWebhookintegration} component={EditWebhookIntegration} />
+    <OnlyLoggedInRoute path={RoutingConfig.webhookintegration} component={WebhookIntegration} />
 
 
     

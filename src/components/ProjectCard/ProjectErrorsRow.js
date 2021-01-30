@@ -66,7 +66,7 @@ export const ProjectErrorsRow = ({ project, errors, location }) => {
     }
     
     ProjectApi.getErrors(project.id, {
-      page: urlParams.get("page") || 1,
+      page: urlParams.get("errors_page") || 1,
       ...requestCriteria,
     })
     .then(response => response.data)
@@ -93,7 +93,7 @@ export const ProjectErrorsRow = ({ project, errors, location }) => {
     }
     
     ProjectApi.getChartData(project.id, {
-      page: urlParams.get("page") || 1,
+      page: urlParams.get("errors_page") || 1,
       ...requestCriteria,
     })
     .then(response => response.data)
@@ -109,10 +109,10 @@ export const ProjectErrorsRow = ({ project, errors, location }) => {
   useEffect(() => {
     requestErrors();
     requestChartData();
-  }, [urlParams.get("page"), urlParams.get("search"), urlParams.get("date_from"), urlParams.get("date_to")]);
+  }, [urlParams.get("errors_page"), urlParams.get("search"), urlParams.get("date_from"), urlParams.get("date_to")]);
 
   const onSubmit = data => {    
-    history.replace(`${RoutingConfig.projectPage.replace(":id", project.id)}?page=1&search=${data.search}&date_from=${data.date_from}&date_to=${data.date_to}`);
+    history.replace(`${RoutingConfig.projectPage.replace(":id", project.id)}?errors_page=1&search=${data.search}&date_from=${data.date_from}&date_to=${data.date_to}`);
   }
   function formatXAxis(tickItem) {
     const date = new Date(tickItem);
@@ -208,20 +208,22 @@ export const ProjectErrorsRow = ({ project, errors, location }) => {
                 )}
               </tbody>
             </Table>
-            <Pagination>
-              <PaginationItem disabled={errors.page === 1}>
-                <PaginationLink first tag={Link} to={RoutingConfig.projectPage.replace(":id", project.id) + `?page=1`} />
-              </PaginationItem>
-              <PaginationItem disabled={errors.page === 1}>
-                <PaginationLink previous tag={Link} to={RoutingConfig.projectPage.replace(":id", project.id) + `?page=${errors.page - 1}`} />
-              </PaginationItem>
-              <PaginationItem disabled={errors.page === Math.ceil(errors.count / 10)}>
-                <PaginationLink next tag={Link} to={RoutingConfig.projectPage.replace(":id", project.id) + `?page=${errors.page + 1}`} />
-              </PaginationItem>
-              <PaginationItem disabled={errors.page === Math.ceil(errors.count / 10)}>
-                <PaginationLink last tag={Link} to={RoutingConfig.projectPage.replace(":id", project.id) + `?page=${Math.ceil(errors.count / 10)}`} />
-              </PaginationItem>
-            </Pagination>
+            {errors.count > 10 &&
+              <Pagination>
+                <PaginationItem disabled={errors.page === 1}>
+                  <PaginationLink first tag={Link} to={RoutingConfig.projectPage.replace(":id", project.id) + `?errors_page=1`} />
+                </PaginationItem>
+                <PaginationItem disabled={errors.page === 1}>
+                  <PaginationLink previous tag={Link} to={RoutingConfig.projectPage.replace(":id", project.id) + `?errors_page=${errors.page - 1}`} />
+                </PaginationItem>
+                <PaginationItem disabled={errors.page === Math.ceil(errors.count / 10)}>
+                  <PaginationLink next tag={Link} to={RoutingConfig.projectPage.replace(":id", project.id) + `?errors_page=${errors.page + 1}`} />
+                </PaginationItem>
+                <PaginationItem disabled={errors.page === Math.ceil(errors.count / 10)}>
+                  <PaginationLink last tag={Link} to={RoutingConfig.projectPage.replace(":id", project.id) + `?errors_page=${Math.ceil(errors.count / 10)}`} />
+                </PaginationItem>
+              </Pagination>
+            }
           </>
         }
       </Col>

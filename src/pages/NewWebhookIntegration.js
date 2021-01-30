@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { connect, useDispatch } from 'react-redux';
-import { ProjectApi } from '../services/ProjectApi';
-import { REQUEST } from '../request.constants';
-import { STATUS_CODES } from '../status.constants';
 import { useHistory } from 'react-router-dom';
-import { RoutingConfig } from '../Routes';
+import { Seo, WebhookItegrationForm } from '../components';
 import { alertActions, projectActions } from '../redux';
-import { ProjectCard } from '../components';
-import { Seo } from '../components';
+import { REQUEST } from '../request.constants';
+import { RoutingConfig } from '../Routes';
+import { ProjectApi } from '../services';
+import { STATUS_CODES } from '../status.constants';
+import { ProjectAuthorizationService } from '../util';
 
-const Project = ({ projects, auth, match, errors, location, webhookIntegrations }) => {
+const NewWebhookIntergration = ({ projects, match, auth }) => {
   const projectId = match.params.id;
   const project = projects.currentProject;
   const [status,setStatus] = useState();
@@ -22,7 +22,14 @@ const Project = ({ projects, auth, match, errors, location, webhookIntegrations 
       .then(response => response.data)
       .then(json => {
         dispatch(projectActions.receiveProject(json.payload));
-        setStatus(REQUEST.SUCCESS);
+
+        if(!ProjectAuthorizationService.isProjectOwner(auth.user, json.payload)) {
+          history.push(RoutingConfig.projectPage.replace(":id", json.payload.id));
+          dispatch(alertActions.errorAlert("You are not allowed to create webhook integration in this project"));
+        }
+        else {
+          setStatus(REQUEST.SUCCESS);
+        }
       })
       .catch(error => {
         const statusCode = error.request.status;
@@ -30,7 +37,7 @@ const Project = ({ projects, auth, match, errors, location, webhookIntegrations 
         switch(statusCode) {
           case STATUS_CODES.FORBIDDEN:
             history.push(RoutingConfig.account);
-            dispatch(alertActions.errorAlert("You are not allowed to view this project"));
+            dispatch(alertActions.errorAlert("You are not allowed to create webhook integration in this project"));
             break;
           default:
             setStatus(REQUEST.ERROR);
@@ -46,21 +53,19 @@ const Project = ({ projects, auth, match, errors, location, webhookIntegrations 
 
   return(
     <>
-      {<Seo pageTitle={project ? project.title : ''} />}
+      {<Seo pageTitle="New webhook integration" />}
       {status === REQUEST.PENDING && <h2>Loading...</h2>}
       {status === REQUEST.ERROR && <h2>Failed to load project.</h2>}
-      {status === REQUEST.SUCCESS && project && <ProjectCard project={project} user={auth.user} errors={errors} location={location} webhookIntegrations={webhookIntegrations} />}
+      {status === REQUEST.SUCCESS && project && <WebhookItegrationForm project={project} /> }
     </>
   )
 }
 
 const mapStateToProps = state => ({
-  projects: state.projects,
   auth: state.auth,
-  errors: state.errors,
-  webhookIntegrations: state.webhookIntegrations,
+  projects: state.projects,
 });
 
-const ConnectedPage = connect(mapStateToProps)(Project);
+const ConnectedPage = connect(mapStateToProps)(NewWebhookIntergration);
 
-export { ConnectedPage as Project };
+export { ConnectedPage as NewWebhookIntergration };

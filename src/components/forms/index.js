@@ -6,3 +6,4 @@ export * from './NewPasswordForm';
 export * from './DeleteAccountForm';
 export * from './NewProjectForm';
 export * from './ProjectEditForm';
+export * from './WebhookIntegrationForm';
