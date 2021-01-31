@@ -7,6 +7,7 @@ import { modalReducer } from "./modal.reducer";
 import { AUTH } from "../constants";
 import { errorReducer } from "./error.reducer";
 import { webhookIntegrationReducer } from "./webhook-integration.reducer";
+import { telegramIntegrationReducer } from "./telegram-integration.reducer";
 
 const appReducer = combineReducers({
   auth: authReducer,
@@ -15,6 +16,7 @@ const appReducer = combineReducers({
   modal: modalReducer,
   errors: errorReducer,
   webhookIntegrations: webhookIntegrationReducer,
+  telegramIntegrations: telegramIntegrationReducer,
 });
 
 export const rootReducer = (state, action) => {

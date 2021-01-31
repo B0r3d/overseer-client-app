@@ -21,14 +21,16 @@ const formatDate = createdAt => {
   return `${day}.${month}.${year}, ${hour}:${minutes}`;
 }
 
-export const WebhookIntegrationTitleRow = ({ integration }) => {
+export const TelegramIntegrationTitleRow = ({ integration }) => {
   return(
     <>
       <div className="mb-4">
-        <h2>{integration.url}</h2>
+        <h2>Telegram integration</h2>
         <hr className="solid" />
       </div>
       <p>Created at: <strong>{formatDate(integration.created_at)}</strong></p>
+      <p>Bot ID: <strong>{integration.bot_id}</strong></p>
+      <p>Chat ID: <strong>{integration.chat_id}</strong></p>
       <p>Filters:</p>
       <div className="pl-2 mb-4">
         {integration.filters.length === 0 ? <p>There are no filters</p> :

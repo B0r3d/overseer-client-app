@@ -9,7 +9,7 @@ import { alertActions, projectActions } from '../redux';
 import { ProjectCard } from '../components';
 import { Seo } from '../components';
 
-const Project = ({ projects, auth, match, errors, location, webhookIntegrations }) => {
+const Project = ({ projects, auth, match, errors, location, webhookIntegrations, telegramIntegrations }) => {
   const projectId = match.params.id;
   const project = projects.currentProject;
   const [status,setStatus] = useState();
@@ -49,7 +49,7 @@ const Project = ({ projects, auth, match, errors, location, webhookIntegrations 
       {<Seo pageTitle={project ? project.title : ''} />}
       {status === REQUEST.PENDING && <h2>Loading...</h2>}
       {status === REQUEST.ERROR && <h2>Failed to load project.</h2>}
-      {status === REQUEST.SUCCESS && project && <ProjectCard project={project} user={auth.user} errors={errors} location={location} webhookIntegrations={webhookIntegrations} />}
+      {status === REQUEST.SUCCESS && project && <ProjectCard project={project} user={auth.user} errors={errors} location={location} webhookIntegrations={webhookIntegrations} telegramIntegrations={telegramIntegrations} />}
     </>
   )
 }
@@ -59,6 +59,7 @@ const mapStateToProps = state => ({
   auth: state.auth,
   errors: state.errors,
   webhookIntegrations: state.webhookIntegrations,
+  telegramIntegrations: state.telegramIntegrations,
 });
 
 const ConnectedPage = connect(mapStateToProps)(Project);

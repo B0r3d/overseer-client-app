@@ -1,31 +1,31 @@
 import React, { useState, useEffect } from 'react'
 import { connect, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { Seo, WebhookIntegrationCard } from '../components';
-import { alertActions, projectActions, webhookIntegrationActions } from '../redux';
+import { Seo, TelegramIntegrationCard } from '../components';
+import { alertActions, projectActions, telegramIntegrationActions } from '../redux';
 import { REQUEST } from '../request.constants';
 import { RoutingConfig } from '../Routes';
 import { IntegrationApi, ProjectApi } from '../services';
 import { STATUS_CODES } from '../status.constants';
 
-const WebhookIntegration = ({ projects, webhookIntegrations, match, auth, location }) => {
+const TelegramIntegration = ({ projects, telegramIntegrations, match, auth, location }) => {
   const projectId = match.params.id;
   const integrationId = match.params.integration_id;
   const [status,setStatus] = useState(REQUEST.PENDING);
   const dispatch = useDispatch();
   const history = useHistory();
-  const integration = webhookIntegrations.currentIntegration;
+  const integration = telegramIntegrations.currentIntegration;
   const project = projects.currentProject;
 
   useEffect(() => {
     if(!integration || integration.id !== integrationId) {
-      IntegrationApi.getWebhookIntegration(integrationId)
+      IntegrationApi.getTelegramIntegration(integrationId)
       .then(response => response.data)
       .then(json => {
         const { payload } = json;
         if(payload.project_id !== projectId) {
           history.push(RoutingConfig.account);
-          dispatch(alertActions.errorAlert("Invalid webhook integration"));
+          dispatch(alertActions.errorAlert("Invalid telegram integration"));
           return;
         }
 
@@ -43,7 +43,7 @@ const WebhookIntegration = ({ projects, webhookIntegrations, match, auth, locati
         else {
           setStatus(REQUEST.SUCCESS);
         }
-        dispatch(webhookIntegrationActions.receiveIntegrationDetails(payload));        
+        dispatch(telegramIntegrationActions.receiveIntegrationDetails(payload));        
       })
       .catch(error => {
         const statusCode = error.request.status;
@@ -67,7 +67,7 @@ const WebhookIntegration = ({ projects, webhookIntegrations, match, auth, locati
       {<Seo pageTitle="Webhook integration" />}
       {status === REQUEST.PENDING && <h2>Loading...</h2>}
       {status === REQUEST.ERROR && <h2>Failed to load project.</h2>}
-      {status === REQUEST.SUCCESS && (integration && project) && <WebhookIntegrationCard location={location} project={project} integration={integration} user={auth.user} />}
+      {status === REQUEST.SUCCESS && (integration && project) && <TelegramIntegrationCard location={location} project={project} integration={integration} user={auth.user} />}
     </>
   )
 }
@@ -75,9 +75,9 @@ const WebhookIntegration = ({ projects, webhookIntegrations, match, auth, locati
 const mapStateToProps = state => ({
   auth: state.auth,
   projects: state.projects,
-  webhookIntegrations: state.webhookIntegrations,
+  telegramIntegrations: state.telegramIntegrations,
 })
 
-const ConnectedPage = connect(mapStateToProps)(WebhookIntegration);
+const ConnectedPage = connect(mapStateToProps)(TelegramIntegration);
 
-export { ConnectedPage as WebhookIntegration };
+export { ConnectedPage as TelegramIntegration };

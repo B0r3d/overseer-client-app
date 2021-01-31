@@ -1,8 +1,10 @@
 import React from 'react'
 import {Switch, Route} from "react-router-dom";
 import { OnlyLoggedInRoute } from './components';
-import { Account, Home, Login, Register, Logout, ChangePassword, RequestNewPassword, NewPassword, DeleteAccount, Page404, NewProject, Project, EditProject, ManageInvitation, Error, NewWebhookIntergration, WebhookIntegration } from './pages';
+import { Account, Home, Login, Register, Logout, ChangePassword, RequestNewPassword, NewPassword, DeleteAccount, Page404, NewProject, Project, EditProject, ManageInvitation, Error, NewWebhookIntergration, WebhookIntegration, EditTelegramIntegration } from './pages';
 import { EditWebhookIntegration } from './pages/EditWebhookIntegration';
+import { NewTelegramIntergration } from './pages/NewTelegramIntegration';
+import { TelegramIntegration } from './pages/TelegramIntegration';
 
 export const RoutingConfig = {
     home: "/",
@@ -22,6 +24,9 @@ export const RoutingConfig = {
     newWebhookIntegration: "/account/project/:id/webhook-integration/new",
     webhookintegration: "/account/project/:id/webhook-integration/:integration_id",
     editWebhookintegration: "/account/project/:id/webhook-integration/:integration_id/edit",
+    newTelegramIntegration: "/account/project/:id/telegram-integration/new",
+    telegramintegration: "/account/project/:id/telegram-integration/:integration_id",
+    editTelegramintegration: "/account/project/:id/telegram-integration/:integration_id/edit",
 }
 
 export const Routes = () => (
@@ -43,8 +48,9 @@ export const Routes = () => (
     <OnlyLoggedInRoute path={RoutingConfig.newWebhookIntegration} component={NewWebhookIntergration} />
     <OnlyLoggedInRoute path={RoutingConfig.editWebhookintegration} component={EditWebhookIntegration} />
     <OnlyLoggedInRoute path={RoutingConfig.webhookintegration} component={WebhookIntegration} />
-
-
+    <OnlyLoggedInRoute path={RoutingConfig.newTelegramIntegration} component={NewTelegramIntergration} />
+    <OnlyLoggedInRoute path={RoutingConfig.editTelegramintegration} component={EditTelegramIntegration} />
+    <OnlyLoggedInRoute path={RoutingConfig.telegramintegration} component={TelegramIntegration} />
     
     {/* 404 ROUTe, THIS HAS TO BE THE LAST ROUTE! */}
     <Route component={Page404} />

@@ -2,14 +2,18 @@ import React, { useState } from 'react'
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { Form, FormGroup, Input, Label, Button, FormText } from 'reactstrap';
-import { alertActions, webhookIntegrationActions } from '../../redux';
+import { alertActions, telegramIntegrationActions } from '../../redux';
 import { RoutingConfig } from '../../Routes';
 import { IntegrationApi } from '../../services';
 
-export const WebhookItegrationForm = ({ project, integration }) => {
+export const TelegramItegrationForm = ({ project, integration }) => {
   const [state, setState] = useState({
-    url: {
-      value: integration ? integration.url : "",
+    bot_id: {
+      value: integration ? integration.bot_id : "",
+      error: "",
+    },
+    chat_id: {
+      value: integration ? integration.chat_id: "",
       error: "",
     },
     filters: integration ? [...integration.filters].map(filter => ({ value: filter, error: ""})) : [],
@@ -33,9 +37,9 @@ export const WebhookItegrationForm = ({ project, integration }) => {
     setState(newState);
   }
 
-  const handleUrlChange = e => {
+  const handleFieldChange = e => {
     const newState = {...state};
-    newState.url.value = e.target.value;
+    newState[e.target.name].value = e.target.value;
     setState(newState);
   }
 
@@ -45,27 +49,25 @@ export const WebhookItegrationForm = ({ project, integration }) => {
     setState(newState);
   }
 
-  const isValidUrl = url => {
-    const pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
-    '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
-    '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
-    '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
-    '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
-    '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
-    return !!pattern.test(url);
-  }
-
   const handleSubmit = e => {
     e.preventDefault();
     const newState = {...state};
-    if(!isValidUrl(state.url.value)) {
-      
-      newState.url.error = "Invalid url.";
+    if(!state.bot_id.value) {
+      newState.bot_id.error = "Bot ID cannot be blank.";
       setState(newState);
       return;
     }
     else {
-      newState.url.error = "";
+      newState.bot_id.error = "";
+    }
+
+    if(!state.chat_id.value) {
+      newState.chat_id.error = "Chat ID cannot be blank.";
+      setState(newState);
+      return;
+    }
+    else {
+      newState.chat_id.error = "";
     }
 
     for(let i = 0; i < state.filters.length; i++) {
@@ -75,7 +77,9 @@ export const WebhookItegrationForm = ({ project, integration }) => {
         return;
       }
     }
-    newState.url.error = "";
+
+    newState.chat_id.error = "";
+    newState.bot_id.error = "";
     newState.filters.forEach(filter => {
       filter.error = "";
     });
@@ -83,19 +87,20 @@ export const WebhookItegrationForm = ({ project, integration }) => {
     setState(newState);
 
     if(integration) {
-      IntegrationApi.editWebhookIntegration(integration.id, {
+      IntegrationApi.editTelegramIntegration(integration.id, {
         project_id: project.id,
-        url: state.url.value,
+        bot_id: state.bot_id.value,
+        chat_id: state.chat_id.value,
         filters: state.filters.map(filter => filter.value)
       })
       .then(response => {
         
-        IntegrationApi.getWebhookIntegration(integration.id)
+        IntegrationApi.getTelegramIntegration(integration.id)
         .then(response => response.data)
         .then(json => {
-          dispatch(webhookIntegrationActions.receiveIntegrationDetails(json.payload));
-          history.push(RoutingConfig.webhookintegration.replace(":id", project.id).replace(":integration_id", integration.id));
-          dispatch(alertActions.successAlert("Webhook integration has been updated."));
+          dispatch(telegramIntegrationActions.receiveIntegrationDetails(json.payload));
+          history.push(RoutingConfig.telegramintegration.replace(":id", project.id).replace(":integration_id", integration.id));
+          dispatch(alertActions.successAlert("Telegram integration has been updated."));
         })
         .catch(error => {});
       })
@@ -104,47 +109,54 @@ export const WebhookItegrationForm = ({ project, integration }) => {
       });
     }
     else {
-      IntegrationApi.createWebhookIntegration({
+      IntegrationApi.createTelegramIntegration({
         project_id: project.id,
-        url: state.url.value,
+        bot_id: state.bot_id.value,
+        chat_id: state.chat_id.value,
         filters: state.filters.map(filter => filter.value)
       })
       .then(response => response.data)
       .then(json => {
-        history.push(RoutingConfig.webhookintegration.replace(":id", project.id).replace(":integration_id", json.payload.id));
-        dispatch(alertActions.successAlert("Webhook integration has been created."));
+        history.push(RoutingConfig.telegramintegration.replace(":id", project.id).replace(":integration_id", json.payload.id));
+        dispatch(alertActions.successAlert("Telegram integration has been created."));
       })
       .catch(error => {
         dispatch(alertActions.errorAlert("There was an error, try again later"));
       });
     }
-    
   }
 
   return(
     <Form onSubmit={handleSubmit} className="pt-2">
-      <h2 className="mb-4">{integration ? "Edit webhook integration" : "New webhook integration"}</h2>
+      <h2 className="mb-4">{integration ? "Edit telegram integration" : "New telegram integration"}</h2>
       <FormGroup>
-        <Label for="webhook_itegration_form_url">URL</Label>
-        <Input name="url" id="webhook_itegration_form_url" value={state.url.value} onChange={handleUrlChange} type="text" />
-        {state.url.error && <div className="text-danger">{state.url.error}</div> }
+        <Label for="telegram_itegration_form_bot_id">Bot ID</Label>
+        <Input name="bot_id" id="telegram_itegration_form_bot_id" value={state.bot_id.value} onChange={handleFieldChange} type="text" />
+        <FormText>Telegram bot ID created with Bot Father.</FormText>
+        {state.bot_id.error && <div className="text-danger">{state.bot_id.error}</div> }
       </FormGroup>
 
+      <FormGroup>
+        <Label for="telegram_itegration_form_chat_id">Chat ID</Label>
+        <Input name="chat_id" id="telegram_itegration_form_chat_id" value={state.chat_id.value} onChange={handleFieldChange} type="text" />
+        <FormText>Telegram chat ID.</FormText>
+        {state.chat_id.error && <div className="text-danger">{state.chat_id.error}</div> }
+      </FormGroup>
       <p>Filters</p>
       <div className="pl-2">
       {state.filters.length === 0 ? <p>There are no filters.</p> :
         <>
           {state.filters.map((filter, index) => 
             <FormGroup key={index}>
-              <Input name={`filter_${index}`} id={`webhook_itegration_form_filter_${index}`} value={state.filters[index].value} onChange={e => handleFilterChange(e, index)} type="text" />
-              <FormText>What class name or namespace paterns should this webhook skip</FormText>
+              <Input name={`filter_${index}`} id={`telegram_itegration_form_filter_${index}`} value={state.filters[index].value} onChange={e => handleFilterChange(e, index)} type="text" />
+              <FormText>What class name or namespace paterns should this telegram integration skip</FormText>
               {state.filters[index].error && <div className="text-danger">{state.filters[index].error}</div> }
               <div className="text-right text-danger"><span style={{cursor: "pointer"}} onClick={() => removeFilter(index)}>Delete filter</span></div>
             </FormGroup>
           )}
         </>
       }
-      <div className="text-right text-primary"><span style={{cursor: "pointer"}} onClick={addFilter}>Add new filter</span></div>
+      <div className="text-right text-primary"><span onClick={addFilter} style={{cursor: "pointer"}}>Add new filter</span></div>
       </div>
       <Button color="primary">{integration ? "Edit" : "New"}</Button>
     </Form>

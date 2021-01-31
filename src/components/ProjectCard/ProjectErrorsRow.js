@@ -33,6 +33,19 @@ const formatDate = occurredAt => {
   return `${day}.${month}.${year}, ${hour}:${minutes}`;
 }
 
+const findMaxValue = array => {
+  let maxValue = 0;
+  for(let i = 0; i < array.length; i++) {
+    const errorCount = parseInt(array[i].error_count);
+
+    if(maxValue < errorCount) {
+      maxValue = errorCount;
+    }
+  }
+
+  return Math.ceil(maxValue / 10) * 10;
+}
+
 export const ProjectErrorsRow = ({ project, errors, location }) => {
   const [status,setStatus] = useState(REQUEST.PENDING);
   const dispatch = useDispatch();
@@ -154,9 +167,9 @@ export const ProjectErrorsRow = ({ project, errors, location }) => {
             {errors.chartData &&
             <ResponsiveContainer width="100%" height={500}>
               <LineChart data={errors.chartData}>
-                  <CartesianGrid strokeDasharray="3 3" />
+                  <CartesianGrid />
                   <XAxis dataKey="date" tickFormatter={formatXAxis} />
-                  <YAxis allowDecimals={false} />
+                  <YAxis allowDecimals={false} domain={[0, findMaxValue(errors.chartData)]} />
                   <Tooltip content={<CustomTooltip />} />
                   <Legend />
                   <Line name="Error count" type="monotone" dataKey="error_count" stroke="#8884d8" strokeWidth={3} />
@@ -182,7 +195,9 @@ export const ProjectErrorsRow = ({ project, errors, location }) => {
                 </Col>
               </Row>
 
-              <Button color="primary">Filter</Button>
+              <Button color="primary" className="mr-2">Filter</Button>
+              <Button color="secondary" className="mr-2" onClick={e => {e.preventDefault(); console.log("Download JSON file.")}}>Download JSON</Button>
+              <Button color="info" onClick={e => {e.preventDefault(); console.log("Download CSV file.")}}>Download CSV</Button>
             </Form>
             <Table>
               <thead>

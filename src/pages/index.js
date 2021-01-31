@@ -15,3 +15,6 @@ export * from './ManageInvitation';
 export * from './Error';
 export * from './NewWebhookIntegration';
 export * from './WebhookIntegration';
+export * from './NewTelegramIntegration';
+export * from './TelegramIntegration';
+export * from './EditTelegramIntegration';

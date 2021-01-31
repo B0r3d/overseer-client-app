@@ -4,3 +4,4 @@ export * from './project.constants';
 export * from './modal.constants';
 export * from './error.constants';
 export * from './webhook-integration.constants';
+export * from './telegram-integration.constants';
