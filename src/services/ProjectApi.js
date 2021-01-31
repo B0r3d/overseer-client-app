@@ -16,9 +16,9 @@ const createProject = ({ project_title, project_description }) => {
   });
 }
 
-const getProjects = () => {
+const getProjects = (page, search) => {
   const jwt = localStorage.getItem("access_token");
-  return Axios.get("/api/v1/project", {
+  return Axios.get(`/api/v1/project?page=${page}&search=${search}`, {
     headers: {
       "Authorization": `Bearer ${jwt}`
     }
@@ -149,6 +149,15 @@ const getError = (projectId, errorId) => {
   });
 }
 
+const getErrorsFile = (projectId, format, { search, date_from, date_to}) => {
+  const jwt = localStorage.getItem("access_token");
+  return Axios.get(`/api/v1/project/${projectId}/errors?search=${search}&date_from=${date_from}&date_to=${date_to}&format=${format}`, {
+    headers: {
+      Authorization: `Bearer ${jwt}`,
+    },
+  });
+}
+
 export const ProjectApi = {
   createProject,
   getProjects,
@@ -165,4 +174,5 @@ export const ProjectApi = {
   getErrors,
   getChartData,
   getError,
+  getErrorsFile,
 }

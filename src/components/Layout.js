@@ -5,6 +5,7 @@ import { Container, Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'r
 import { Header } from './Header';
 import { useHistory } from 'react-router-dom';
 import { alertActions } from '../redux';
+import { Footer } from './Footer';
 const Layout = ({ children, alert, modal }) => {
   const history = useHistory();
   const dispatch = useDispatch();
@@ -28,10 +29,12 @@ const Layout = ({ children, alert, modal }) => {
         </ModalFooter>
       </Modal>
 
-      <Container className="pt-2">
+      <Container className="pt-2" style={{ minHeight: `calc(100vh - 96px)`}}>
         { alert.hasOwnProperty("message") && <Alert alert={alert} /> }
         {children}
       </Container>
+
+      <Footer />
     </div>
   )
 }

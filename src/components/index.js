@@ -8,3 +8,4 @@ export * from './Seo';
 export * from './ErrorCard';
 export * from './WebhookIntegrationCard';
 export * from './TelegramIntegrationCard';
+export * from './Footer';

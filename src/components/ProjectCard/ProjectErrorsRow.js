@@ -11,6 +11,7 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from 'recharts';
 import styles from './style.module.css';
+import { alertActions } from '../../redux';
 
 const formatDate = occurredAt => {
   const date = new Date(occurredAt);
@@ -127,6 +128,7 @@ export const ProjectErrorsRow = ({ project, errors, location }) => {
   const onSubmit = data => {    
     history.replace(`${RoutingConfig.projectPage.replace(":id", project.id)}?errors_page=1&search=${data.search}&date_from=${data.date_from}&date_to=${data.date_to}`);
   }
+
   function formatXAxis(tickItem) {
     const date = new Date(tickItem);
     let month = '' + (date.getMonth() + 1),
@@ -153,6 +155,52 @@ export const ProjectErrorsRow = ({ project, errors, location }) => {
     return null;
   };
 
+  const downloadJson = e => {
+    e.preventDefault()
+    const requestCriteria = {...criteria};
+
+    if(criteria.date_from) {
+      const date = new Date(criteria.date_from + "T00:00");
+      requestCriteria.date_from = date.getTime() / 1000;
+    }
+
+    if(criteria.date_to) {
+      const date = new Date(criteria.date_to + "T00:00");
+      requestCriteria.date_to = date.getTime() / 1000;
+    }
+    ProjectApi.getErrorsFile(project.id, 'JSON', requestCriteria)
+    .then(response => response.data)
+    .then(json => {
+      window.location = process.env.REACT_APP_BACKEND_URL + `/download?file_path=${encodeURIComponent(json.payload.file)}`;
+    })
+    .catch(error => {
+      dispatch(alertActions.errorAlert("Failed to download the file, try again later."));
+    })
+  };
+
+  const downloadCsv = e => {
+    e.preventDefault()
+    const requestCriteria = {...criteria};
+
+    if(criteria.date_from) {
+      const date = new Date(criteria.date_from + "T00:00");
+      requestCriteria.date_from = date.getTime() / 1000;
+    }
+
+    if(criteria.date_to) {
+      const date = new Date(criteria.date_to + "T00:00");
+      requestCriteria.date_to = date.getTime() / 1000;
+    }
+    ProjectApi.getErrorsFile(project.id, 'CSV', requestCriteria)
+    .then(response => response.data)
+    .then(json => {
+      window.location = process.env.REACT_APP_API_URL + `/download?file_path=${encodeURIComponent(json.payload.file)}`;
+    })
+    .catch(error => {
+      dispatch(alertActions.errorAlert("Failed to download the file, try again later."));
+    })
+  };
+
   return(
     <Row>
       <Col>
@@ -164,7 +212,7 @@ export const ProjectErrorsRow = ({ project, errors, location }) => {
         {status === REQUEST.ERROR && <p>Failed to load errors.</p> }
         {status === REQUEST.SUCCESS &&
           <>
-            {errors.chartData &&
+            {errors.chartData.length > 0 &&
             <ResponsiveContainer width="100%" height={500}>
               <LineChart data={errors.chartData}>
                   <CartesianGrid />
@@ -196,8 +244,8 @@ export const ProjectErrorsRow = ({ project, errors, location }) => {
               </Row>
 
               <Button color="primary" className="mr-2">Filter</Button>
-              <Button color="secondary" className="mr-2" onClick={e => {e.preventDefault(); console.log("Download JSON file.")}}>Download JSON</Button>
-              <Button color="info" onClick={e => {e.preventDefault(); console.log("Download CSV file.")}}>Download CSV</Button>
+              {errors.count > 0 && <Button color="secondary" className="mr-2" onClick={e => downloadJson(e)}>Download JSON</Button>}
+              {errors.count > 0 && <Button color="info" onClick={e => downloadCsv(e)}>Download CSV</Button>}
             </Form>
             <Table>
               <thead>
